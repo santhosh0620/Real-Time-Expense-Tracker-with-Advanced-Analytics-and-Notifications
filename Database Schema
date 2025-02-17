@@ -1,0 +1,9 @@
+CREATE TABLE expense (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(50) NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    amount DOUBLE PRECISION NOT NULL,
+    date DATE NOT NULL
+);
+
+CREATE INDEX idx_user_id ON expense(user_id);
