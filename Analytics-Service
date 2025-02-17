@@ -1,0 +1,42 @@
+@Service
+public class AnalyticsService {
+
+    @Autowired
+    private ExpenseRepository expenseRepository;
+
+    public Map<String, Double> getCategoryWiseSpending(String userId) {
+        // Fetch expenses from the database
+        List<Expense> expenses = expenseRepository.findByUserId(userId);
+
+        // Calculate category-wise spending
+        Map<String, Double> categoryWiseSpending = new HashMap<>();
+        for (Expense expense : expenses) {
+            String category = expense.getCategory();
+            double amount = expense.getAmount();
+            categoryWiseSpending.put(category, categoryWiseSpending.getOrDefault(category, 0.0) + amount);
+        }
+
+        return categoryWiseSpending;
+    }
+
+    public List<Double> getSpendingTrends(String userId) {
+        // Fetch expenses from the database
+        List<Expense> expenses = expenseRepository.findByUserId(userId);
+
+        // Calculate monthly spending trends
+        Map<Integer, Double> monthlySpending = new HashMap<>();
+        for (Expense expense : expenses) {
+            int month = expense.getDate().getMonthValue();
+            double amount = expense.getAmount();
+            monthlySpending.put(month, monthlySpending.getOrDefault(month, 0.0) + amount);
+        }
+
+        // Convert to a list of monthly spending
+        List<Double> spendingTrends = new ArrayList<>();
+        for (int i = 1; i <= 12; i++) {
+            spendingTrends.add(monthlySpending.getOrDefault(i, 0.0));
+        }
+
+        return spendingTrends;
+    }
+}
