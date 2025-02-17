@@ -1,0 +1,35 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const Dashboard = () => {
+    const [spendingTrends, setSpendingTrends] = useState([]);
+    const [categoryWiseSpending, setCategoryWiseSpending] = useState({});
+
+    useEffect(() => {
+        axios.get("/api/analytics/spending-trends")
+            .then(response => setSpendingTrends(response.data));
+
+        axios.get("/api/analytics/category-wise-spending")
+            .then(response => setCategoryWiseSpending(response.data));
+    }, []);
+
+    return (
+        <div>
+            <h1>Spending Trends</h1>
+            <ul>
+                {spendingTrends.map((amount, index) => (
+                    <li key={index}>Month {index + 1}: ${amount}</li>
+                ))}
+            </ul>
+
+            <h1>Category-Wise Spending</h1>
+            <ul>
+                {Object.entries(categoryWiseSpending).map(([category, amount]) => (
+                    <li key={category}>{category}: ${amount}</li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default Dashboard;
