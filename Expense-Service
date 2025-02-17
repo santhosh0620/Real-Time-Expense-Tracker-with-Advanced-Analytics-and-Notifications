@@ -1,0 +1,37 @@
+@Service
+public class ExpenseService {
+
+    @Autowired
+    private ExpenseRepository expenseRepository;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    private static final String EXPENSE_CACHE_KEY = "expense_";
+
+    public Expense addExpense(Expense expense) {
+        // Save to database
+        Expense savedExpense = expenseRepository.save(expense);
+
+        // Cache the result
+        redisTemplate.opsForValue().set(EXPENSE_CACHE_KEY + savedExpense.getId(), savedExpense, 10, TimeUnit.MINUTES);
+
+        return savedExpense;
+    }
+
+    public Expense getExpenseById(Long id) {
+        // Check cache first
+        Expense cachedExpense = (Expense) redisTemplate.opsForValue().get(EXPENSE_CACHE_KEY + id);
+        if (cachedExpense != null) {
+            return cachedExpense;
+        }
+
+        // Fetch from database if not in cache
+        Expense expense = expenseRepository.findById(id).orElseThrow(() -> new RuntimeException("Expense not found"));
+
+        // Cache the result
+        redisTemplate.opsForValue().set(EXPENSE_CACHE_KEY + id, expense, 10, TimeUnit.MINUTES);
+
+        return expense;
+    }
+}
