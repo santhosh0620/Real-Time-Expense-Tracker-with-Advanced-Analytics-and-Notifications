@@ -1,0 +1,2 @@
+# Real-Time-Expense-Tracker-with-Advanced-Analytics-and-Notifications
+This project is a microservices-based application that allows users to track their expenses in real-time. It provides advanced analytics, such as spending trends and category-wise breakdowns, and sends notifications for budget thresholds. The application is optimized for performance using caching, database indexing, and asynchronous processing.
